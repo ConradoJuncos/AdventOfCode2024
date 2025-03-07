@@ -1,0 +1,12 @@
+input consists of multiple "reports" (lists of numbers)
+the program has to show how many reports are safe
+a report is safe under two conditions:
+1 - the numbers are either all increasing or all decreasing
+2 - any two adjacent numbers differ by at least one and at most three
+Examples:
+7 6 4 2 1: Safe
+1 2 7 8 9: Unsafe
+9 7 6 2 1: Unsafe
+1 3 2 4 5: Unsafe
+8 6 4 4 1: Unsafe
+1 3 6 7 9: Safe
