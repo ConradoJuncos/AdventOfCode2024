@@ -81,19 +81,43 @@ def sum_of_middle_numbers_from_ordered_updates(rules_list, updates_list):
             sum += middle_number(update)
     return sum
 
+def sum_of_middle_numbers_from_unordered_updates(updates_list):
+    sum = 0
+    for update in updates_list:
+        sum += middle_number(update)
+    return sum
 
 
-def order_update(rules, update):
-    graph = {page: [] for page in update}
-    relevant_rules = []
-    relevant_rules += [rule for rule in rules if rule[0] in update or rule[1] in update]
+def order_updates(rules, updates):
+    ordered = []
+    for update in updates:
+        graph = {page: [] for page in update}
+        counter = {page: 0 for page in update}
+        relevant_rules = []
+        relevant_rules += [rule for rule in rules if rule[0] in update and rule[1] in update]
     
-    for i in relevant_rules:
-        graph[i[0]].append(i[1])
-    print(graph)
+        for i in relevant_rules:
+            x = i[0]
+            y = i[1]
+            graph[x].append(y)
+            counter[x] = len(graph[x])
+        upd = []
+
+        for key, value in counter.items():
+            max_value = max(counter.values())
+            max_key = -1
+            for k, v in counter.items():
+                if v == max_value:
+                    max_key = k
+                    break
+            upd.append(max_key)
+            counter[max_key] = -1
+        ordered.append(tuple(upd))
+        upd = []
+    return ordered
 
 def main():
-    filepath = "day5/test.txt"
+    filepath = "day5/input.txt"
     rules, updates = get_rules_and_updates(filepath)
     rules_list = get_rules_list(rules)
     updates_list = get_updates_list(updates)
@@ -104,8 +128,10 @@ def main():
     # pt 2: order the unordered updates and calculate the sum of the middle numbers
 
     unordered_updates = [update for update in updates_list if not is_ordered(update, rules_list)]
-    ordered_unordered_updates = [order_update(rules_list, update) for update in unordered_updates]
-    
+    ordered_unordered_updates = order_updates(rules_list, unordered_updates)
+    # print(ordered_unordered_updates)
+    sum = sum_of_middle_numbers_from_unordered_updates(ordered_unordered_updates)
+    print("Sum of middle numbers of previously unordered updates:", sum)
 
 if __name__ == "__main__":
     main()
