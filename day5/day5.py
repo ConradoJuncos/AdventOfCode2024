@@ -1,3 +1,12 @@
+"""
+Go through every update
+For each update, get the relevant rules
+For each page of the update, make a dictionary
+Key = page | Value = [] of pages that go after that page
+12:[13,81,3] -> 12 goes before 13, 81 and 3
+Go through every rule X|Y and add Y to the [] of the dictionary of key X
+"""
+
 def get_rules_and_updates(filepath):
     rules = ""
     updates = ""
@@ -67,29 +76,36 @@ def is_ordered(update, rules):
 
 def sum_of_middle_numbers_from_ordered_updates(rules_list, updates_list):
     sum = 0
-
     for update in updates_list:
         if is_ordered(update, rules_list):
             sum += middle_number(update)
-
     return sum
 
 
+
+def order_update(rules, update):
+    graph = {page: [] for page in update}
+    relevant_rules = []
+    relevant_rules += [rule for rule in rules if rule[0] in update or rule[1] in update]
+    
+    for i in relevant_rules:
+        graph[i[0]].append(i[1])
+    print(graph)
+
 def main():
-    filepath = "day5/input.txt"
+    filepath = "day5/test.txt"
     rules, updates = get_rules_and_updates(filepath)
     rules_list = get_rules_list(rules)
     updates_list = get_updates_list(updates)
 
-    sum = sum_of_middle_numbers_from_ordered_updates(rules_list, updates_list)
+    # sum = sum_of_middle_numbers_from_ordered_updates(rules_list, updates_list)
+    # print("Sum:", sum)
 
-    print("Sum:", sum)
+    # pt 2: order the unordered updates and calculate the sum of the middle numbers
+
+    unordered_updates = [update for update in updates_list if not is_ordered(update, rules_list)]
+    ordered_unordered_updates = [order_update(rules_list, update) for update in unordered_updates]
+    
 
 if __name__ == "__main__":
     main()
-
-'''
-Agarrar un subset de las reglas que afectan a las paginas de la update actual
-Para cada X Y, verificar si una update dice que sea Y|X
-else pass 
-'''
