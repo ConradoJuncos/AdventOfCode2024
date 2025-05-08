@@ -1,3 +1,6 @@
+import time
+from itertools import product
+
 def get_equations(filepath):
     with open (filepath, 'r') as file:
         equations = []
@@ -48,19 +51,73 @@ def result_is_obtainable(result, numbers):
         return int(result)
     return 0
 
+def operate_with_concatenation(numbers, chars):
+    result = int(numbers[0])
+    for i in range(len(chars)):
+        if chars[i] == 'a':
+            result = int(result) * int(numbers[i+1])
+        if chars[i] == 'b':
+            result = int(result) + int(numbers[i+1])
+        if chars[i] == 'c':
+            result = str(result) + str(numbers[i+1])
+    return int(result)
+
+
+def get_list_of_results(numbers, chars): 
+    numbers = numbers.split(" ")
+    results = []
+    for i in chars:
+        results.append(operate_with_concatenation(numbers, i))
+    return results
+
+def get_chars(length):
+    return [''.join(p) for p in product('abc', repeat=length)]
+
+def result_is_obtainable_with_concatenation(result, numbers):
+    # Creates an array of strings with every ordered combination of "a b c" characters
+    length = 0
+    for i in numbers:
+        if i == " ":
+            length += 1
+    chars = get_chars(length)
+    list_of_results = get_list_of_results(numbers, chars)
+    for i in list_of_results:
+        if int(result) == i:
+            return int(result)
+    return 0
+
 def main():
     filepath = "./input.txt"
     equations = get_equations(filepath)
+    # Results: [int, int, ...]
+    # Numbers: [[int, int, ...], [int, int, ...], ...]
     results, numbers = [], []
     for i in equations:
         an, op = i.split(",")
         results.append(an)
         numbers.append(op)
 
+    # Part 1
+    start1 = time.time()
+    
     valid_sum = 0
     for i in range(len(results)):
         valid_sum += result_is_obtainable(results[i], numbers[i])
     print(valid_sum)
+
+    time1 = time.time() - start1
+    print(f"Part 1 executed in {time1:.4f} seconds")
+
+    # Part 2
+    start2 = time.time()
+
+    valid_sum_2 = 0
+    for i in range(len(results)):
+        valid_sum_2 += result_is_obtainable_with_concatenation(results[i], numbers[i])
+    print(valid_sum_2)
+
+    time2 = time.time() - start2
+    print(f"Part 2 executed in {time2:.4f} seconds")
 
 if __name__ == "__main__":
     main()
